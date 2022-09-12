@@ -3,7 +3,7 @@
 {% block body %}
 
 <h1>REGISTER</h1>
-    <form method='POST'>
+    <form method='POST' novalidate>
         {% csrf_token %}
             {{ form.as_p }}
     <button type="submit">register</button>

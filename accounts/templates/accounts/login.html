@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %} login {% endblock %}
+{% block body %}
+    <h1>login</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <input type="text" name="user" placeholder="نام کاربری خود را وارد کنید"> <br><br>
+        <input type="password" name="password" placeholder="رمز عبور خود را وارد کیند"> <br><br>
+        <button type="submit">login</button>
+    </form>
+{% endblock %}

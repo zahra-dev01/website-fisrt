@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 
 # Create Register Form ---------------------------------------------
 class UserRegisterForm(forms.Form):
-    user_name = forms.CharField(max_length=50)
-    email = forms.EmailField()
-    first_name = forms.CharField(max_length=50)
-    last_name = forms.CharField(max_length=50)
-    password_1 = forms.CharField(max_length=50)
-    password_2 = forms.CharField(max_length=50) #password again
+    user_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام کاربری خود را وارد کنید'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'ایمیل خود را وارد کنید'}))
+    first_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام خود را وارد کنید'}))
+    last_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام خانوادگی خود را وارد کنید'}))
+    password_1 = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را وارد کنید'}))
+    password_2 = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را تکرار کنید'}))
 
     # Form Validation
     def clean_user_name(self):
@@ -40,9 +40,14 @@ class UserRegisterForm(forms.Form):
         password1 = self.cleaned_data['password_1']
         password2 = self.cleaned_data['password_2']
         if password1 != password2:
-            raise forms.ValidationError('پسوردها مطابقت ندارند.')
-        elif len(password1) < 8:
-            raise forms.ValidationError('پسورد شما کوتاه است.')
-        elif not any(i.issupper for i in password1):
-            raise forms.ValidationError('پسورد شما حداقل باید یک حروف بزرگ داشته باشد.')
+            raise forms.ValidationError('تکرار رمزعبور مطابقت ندارند.')
+        elif len(password1) < 4:
+            raise forms.ValidationError('رمز عبور شما کوتاه است.')
+        # elif not any(i.issupper for i in password1):
+        #     raise forms.ValidationError('رمز عبور شما حداقل باید یک حروف بزرگ داشته باشد.')
         return password1
+
+# Create login Form --------------------------------------------------------
+class UserLoginForm(forms.Form):
+    user = forms.CharField()
+    password = forms.CharField()
