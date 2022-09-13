@@ -1,3 +1,27 @@
 {% extends 'base.html' %}
-{% block title %} Profile {% endblock %}
-{% block body %} <h1> profile </h1> {% endblock %}
+{% block title %} {{ profile.user.username }} {% endblock %}
+{% block body %}
+<h1> profile </h1>
+<table>
+<tr>
+    <th>user: {{ profile.user.username }} </th>
+</tr>
+<tr>
+    <th>name: {{ profile.user.first_name }}</th>
+</tr>
+<tr>
+    <th>last name: {{ profile.user.last_name }}</th>
+</tr>
+<tr>
+    <th>email: {{ profile.user.email }}</th>
+</tr>
+<tr>
+    <th>phone: {{ profile.phone }} </th>
+</tr>
+<tr>
+    <th>address: {{ profile.address }} </th>
+</tr>
+</table>
+    <a href="{% url 'accounts:update' %}">Update Profile</a><br>
+    <a href="{% url 'accounts:change' %}">Change Password</a>
+{% endblock %}

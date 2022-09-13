@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
+from .models import *
 
 
 # Create Register Form ---------------------------------------------
@@ -20,7 +20,7 @@ class UserRegisterForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User.objects.filter(email= email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError('این ایمیل از قبل وجود دارد.')
         return email
 
@@ -47,7 +47,24 @@ class UserRegisterForm(forms.Form):
         #     raise forms.ValidationError('رمز عبور شما حداقل باید یک حروف بزرگ داشته باشد.')
         return password1
 
+
 # Create login Form --------------------------------------------------------
 class UserLoginForm(forms.Form):
     user = forms.CharField()
     password = forms.CharField()
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Mata:
+        model = Profile
+        fields = ['phone', 'address']
+
+
+
+
