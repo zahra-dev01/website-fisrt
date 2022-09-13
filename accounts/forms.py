@@ -1,15 +1,19 @@
 from django import forms
 from .models import *
 
-
+error = {
+    'min_length': 'کاراکترهای وارد شده کمتر از حد مجاز است' ,
+    'required': 'پر کردن این گزینه اجباری است',
+    'invalid':'ایمیل شما نامعتبر است'
+}
 # Create Register Form ---------------------------------------------
 class UserRegisterForm(forms.Form):
-    user_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام کاربری خود را وارد کنید'}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'ایمیل خود را وارد کنید'}))
-    first_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام خود را وارد کنید'}))
-    last_name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder':'نام خانوادگی خود را وارد کنید'}))
-    password_1 = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را وارد کنید'}))
-    password_2 = forms.CharField(max_length=50, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را تکرار کنید'}))
+    user_name = forms.CharField(max_length=50, error_messages=error, widget=forms.TextInput(attrs={'placeholder':'نام کاربری خود را وارد کنید'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'ایمیل خود را وارد کنید'}), error_messages=error,)
+    first_name = forms.CharField(max_length=20, min_length=2, error_messages=error, widget=forms.TextInput(attrs={'placeholder':'نام خود را وارد کنید'}))
+    last_name = forms.CharField(max_length=50, error_messages=error, widget=forms.TextInput(attrs={'placeholder':'نام خانوادگی خود را وارد کنید'}))
+    password_1 = forms.CharField(max_length=50, error_messages=error, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را وارد کنید'}))
+    password_2 = forms.CharField(max_length=50, error_messages=error, widget=forms.PasswordInput(attrs={'placeholder':'پسورد خود را تکرار کنید'}))
 
     # Form Validation
     def clean_user_name(self):
@@ -64,6 +68,14 @@ class ProfileUpdateForm(forms.ModelForm):
     class Mata:
         model = Profile
         fields = ['phone', 'address']
+
+
+class PhoneForm(forms.Form):
+    phone = forms.IntegerField()
+
+
+class CodeForm(forms.Form):
+    code = forms.IntegerField()
 
 
 

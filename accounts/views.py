@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from random import randint
+from kavenegar import *
 
 
 # Registration form -----------------------------------------------
@@ -65,8 +67,8 @@ def user_profile(request):
 def user_update(request):
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
-        #profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() : #and profile_form.is_valid():
+        # profile_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid(): #and profile_form.is_valid():
             user_form.save()
             #profile_form.save()
             # messages.success(request, 'اطلاعات کاربری شما ویرایش شد', extra_tags='success')
@@ -94,9 +96,45 @@ def change_password(request):
     return render(request, 'accounts/change.html', {'form': form})
 
 
+# Login with mobile number
+def phone(request):
+    if request.method == 'POST':
+        form = PhoneForm(request.POST)
+        if form.is_valid():
+            global random_code, phone
+            data = form.cleaned_data
+            phone = f"0{data['phone']}"
+            random_code = randint(100, 1000)
+            # سرویس پیامک رایگان است و فقط به شماره خودم پیامک ارسال می شود
+            try:
+                api = KavenegarAPI('5A346137582B657A347A7170766B6F44665576735351666B356A77593041492F6E71663454736C527146633D')
+                params = {'sender':'100047778',
+                        'receptor':phone,
+                        'message':f'کد ورود شما به فروشگاه : {random_code}'}
+                response = api.sms_send(params)
+            except APIException as e:
+                return redirect('accounts:verify')
+    else:
+        form = PhoneForm()
+    return render(request, 'accounts/phone.html', {'form': form})
 
-
-
+# The corresponding form to write the code sent by SMS
+def verify(request):
+    if request.method == 'POST':
+        form = CodeForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            if random_code == data['code']:
+                profile = Profile.objects.get(phone=phone)
+                user = User.objects.get(profile__id=profile.id)
+                login(request, user)
+                messages.success(request, 'خوش آمدید', extra_tags='success')
+                return redirect('home:home')
+            else:
+                messages.error(request, 'کد وارد شده اشتباه است')
+    else:
+        form = CodeForm()
+    return render(request, 'accounts/code.html', {'form': form})
 
 
 

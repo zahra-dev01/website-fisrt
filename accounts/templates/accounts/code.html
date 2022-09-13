@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-{% block title %} Change Password {% endblock %}
+{% block title %} verify {% endblock %}
 {% block body %}
 
-<h1>Change Password</h1>
+<h1>ارسال پیامک به شماره همراه</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">ثبت ویرایش</button>
+        <button type="submit">login</button>
     </form>
 {% endblock %}
-

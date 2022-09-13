@@ -6,11 +6,11 @@ from phone_field import PhoneField
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = PhoneField(null=True, blank=True)
+    phone = models.IntegerField(null=True, blank=True)
     address = models.CharField(max_length=300, null=True, blank=True)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 # signals---------------------------------------------
