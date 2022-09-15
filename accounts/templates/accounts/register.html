@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %} Register {% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
+{% endblock %}
 {% block body %}
-
 <h1>REGISTER</h1>
     <form method='POST' novalidate>
         {% csrf_token %}

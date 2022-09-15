@@ -65,7 +65,7 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    class Mata:
+    class Meta:
         model = Profile
         fields = ['phone', 'address']
 
@@ -76,7 +76,4 @@ class PhoneForm(forms.Form):
 
 class CodeForm(forms.Form):
     code = forms.IntegerField()
-
-
-
 
