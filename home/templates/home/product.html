@@ -4,5 +4,23 @@
 {% endblock %}
 {% block body %}
 <h1>ALL PRODUCT</h1>
+    {% for data in category %}
+        <a href="{{ data.get_absolute_url }}">{{ data.name }}</a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu">
+                {% for info in data.sub.all %}
+                <a class="dropdown-item" href="{{ info.get_absolute_url }}">{{ info.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <h2>{{ product.name }}</h2>
+    {% for product in products %}
+        <h3>{{ product.name }}</h3>
+        <a href="{% url 'home:detail' product.id %}">
+            <img src="{{ product.image.url }}" alt="">
+        </a>
+    {% endfor %}
 {% endblock %}
 
