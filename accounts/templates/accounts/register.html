@@ -5,11 +5,15 @@
     <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
 {% endblock %}
 {% block body %}
-<h1>REGISTER</h1>
-    <form method='POST' novalidate>
+<br>
+<h3>ایجاد حساب کاربری</h3>
+<br>
+    <forsm method='POST' novalidate>
         {% csrf_token %}
-            {{ form.as_p }}
+        {{ form.as_p }}<br><br>
     <button type="submit">register</button>
     </form>
+<br>
+<br>
 {% endblock %}
 

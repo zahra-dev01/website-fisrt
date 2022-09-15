@@ -1,27 +1,29 @@
 {% extends 'base.html' %}
-{% block title %} {{ profile.user.username }} {% endblock %}
+{% load static %}
+{% block title %} پروفایل من{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'accounts/profile.css' %}">
+{% endblock %}
 {% block body %}
-<h1> profile </h1>
-<table>
-<tr>
-    <th>user: {{ profile.user.username }} </th>
-</tr>
-<tr>
-    <th>name: {{ profile.user.first_name }}</th>
-</tr>
-<tr>
-    <th>last name: {{ profile.user.last_name }}</th>
-</tr>
-<tr>
-    <th>email: {{ profile.user.email }}</th>
-</tr>
-<tr>
-    <th>phone: {{ profile.phone }} </th>
-</tr>
-<tr>
-    <th>address: {{ profile.address }} </th>
-</tr>
-</table>
-    <a href="{% url 'accounts:update' %}">Update Profile</a><br>
-    <a href="{% url 'accounts:change' %}">Change Password</a>
+<br>
+<h3 style="text-align: center; color: rgb(58, 99, 99); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">اطلاعات پروفایل من</h3>
+<br>
+<div class="card" style="width: 25rem; border-radius: 30px; margin: 15px auto; text-align:right; background-color: #FBE1BB ;">
+    <div class="card-body">
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.user.username }} :نام کاربری</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.user.first_name }} :نام</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.user.last_name }} :نام خانوادگی</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.user.email }} :ایمیل</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.phone }} :تلفن</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ profile.address }} :آدرس</h6>
+      <br>
+      <div class="container">
+        <input type="button" style="width: 200px; height: 35px0; border: 2px solid transparent; border-radius: 20px;" onclick="window.location.href='{% url 'accounts:update' %}';" class="btn btn-warning btn-lg" value="ویرایش پروفایل من"/>
+    </div>
+      <br>
+        <div class="container">
+            <input type="button"  style="width: 200px; height: 35px0; border: 2px solid transparent; border-radius: 20px;" onclick="window.location.href='{% url 'accounts:change' %}';" class="btn btn-warning btn-lg" value="تغییر رمز عبور"/>
+        </div>
+    </div>
+  </div>
 {% endblock %}
