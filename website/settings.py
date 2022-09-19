@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
     'phone_field',
+    'ckeditor',
+    'ckeditor_uploader',
+    'taggit',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'website.urls'
@@ -122,8 +126,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
+CKEDITOR_UPLOAD_PATH = 'ck/'
+CKEDITOR_CONFIGS = {
+    'default':{
+        'toolbar': 'full',
+    },
+}
+TAGGIT_CASE_INSENSITIVE = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

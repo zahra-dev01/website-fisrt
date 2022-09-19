@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
+from taggit.managers import TaggableManager
+from django.forms import ModelForm
 
 
 class Category(models.Model):
@@ -20,7 +23,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    VARIANT = (
+    VARIANT_CHOICES = (
         ('None', 'none'),
         ('Size', 'size'),
         ('Color', 'color'),
@@ -31,12 +34,24 @@ class Product(models.Model):
     unit_price = models.PositiveIntegerField()
     discount = models.PositiveIntegerField(blank=True, null=True)
     total_price = models.PositiveIntegerField()
-    information = models.TextField(null=True, blank=True)
+    information = RichTextUploadingField(null=True, blank=True)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
+    tags = TaggableManager(blank=True)
     available = models.BooleanField(default=True)
-    status = models.CharField(max_length=50, null=True, blank=True, Choices=VARIANT)
+    status = models.CharField(max_length=50, null=True, blank=True, choices=VARIANT_CHOICES)
     image = models.ImageField(upload_to='product')
+    like = models.ManyToManyField(User, blank=True, related_name='product_like')
+    total_like = models.IntegerField(default=0)
+    unlike = models.ManyToManyField(User, blank=True, related_name='product_unlike')
+    total_unlike = models.IntegerField(default=0)
+
+    def total_like(self):
+        return self.like.count()
+
+    def total_unlike(self):
+        return self.unlike.count()
+
 
     def __str__(self):
         return self.name
@@ -89,3 +104,25 @@ class Variants(models.Model):
             else:
                 return int(d)
         return self.total_price
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    comment = models.TextField()
+    rate = models.PositiveIntegerField(default=1)
+    create = models.DateTimeField(auto_now_add=True)
+    reply = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='comment_reply')
+    is_reply = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.product.name
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment', 'rate']
+
+
+
