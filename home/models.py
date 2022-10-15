@@ -4,6 +4,7 @@ from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.forms import ModelForm
+from django.db.models import Avg
 
 
 class Category(models.Model):
@@ -46,12 +47,17 @@ class Product(models.Model):
     unlike = models.ManyToManyField(User, blank=True, related_name='product_unlike')
     total_unlike = models.IntegerField(default=0)
 
+    def average(self):
+        data = Comment.objects.filter(is_reply=False, product=self).aggregate(avg=Avg('rate'))
+        star = 0
+        if data['avg'] is not None:
+            star = round(data['avg'], 1)
+        return star
     def total_like(self):
         return self.like.count()
 
     def total_unlike(self):
         return self.unlike.count()
-
 
     def __str__(self):
         return self.name
@@ -88,7 +94,6 @@ class Variants(models.Model):
     discount = models.PositiveIntegerField(blank=True, null=True)
     total_price = models.PositiveIntegerField()
 
-
     def __str__(self):
         return self.name
 
@@ -114,6 +119,11 @@ class Comment(models.Model):
     create = models.DateTimeField(auto_now_add=True)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='comment_reply')
     is_reply = models.BooleanField(default=False)
+    comment_like = models.ManyToManyField(User, blank=True, related_name='cm_like')
+    total_comment_like = models.PositiveIntegerField(default=0)
+
+    def total_comment_like(self):
+        return self.comment_like.count()
 
     def __str__(self):
         return self.product.name
@@ -125,4 +135,12 @@ class CommentForm(ModelForm):
         fields = ['comment', 'rate']
 
 
+class ReplyForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment']
 
+
+class Images(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='image/', blank=True)

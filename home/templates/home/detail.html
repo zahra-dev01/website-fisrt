@@ -6,20 +6,34 @@
 {% block title %} جزئیات محصول {% endblock %}
 {% block body %}
     <div class="container">
-        <h1>{{ product.name }}</h1>
-        <img src="{{ product.image.url }}">
-        <p>{{ product.information|safe}}</p>
-        <small> like: {{ product.total_like }}</small><br>
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'home:product_like' product.id %}"
-               class="btn btn-info {% if is_unlike %} disabled {% endif %}">Like</a><br><br>
-            <small> unlike: {{ product.total_unlike }}</small><br>
-            <a href="{% url 'home:product_unlike' product.id %}"
-               class="btn btn-danger {% if is_like %} disabled {% endif %}">disLike</a>
-        {% endif %}
+        <div class="row">
+            <div class="col-10">
+                <h1>{{ product.name }}</h1>
+                <h4>rate: {{ product.average }}</h4><br>
+                <img src="{{ product.image.url }}" alt=""><br>
+                <p>{{ product.information|safe }}</p>
+            </div>
+
+            {% for img in images %}
+                <img src="{{ img.image.url }}" alt="">
+            {% endfor %}
+
+            <div class="col-2 mt-3">
+                <div class="row">
+                    <h4>like: {{ product.total_like }} </h4>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'home:product_like' product.id %}"
+                           class="btn btn-info {% if is_unlike %} disabled {% endif %}">Like</a><br><br>
+                        <small> unlike: {{ product.total_unlike }}</small>
+                        <a href="{% url 'home:product_unlike' product.id %}"
+                           class="btn btn-danger {% if is_like %} disabled {% endif %}">disLike</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         <br>
         <br>
-        {% if product.status == 'Size' %}
+        {% if product.status == 'Size' %}    ------
             <form action="" method="post">
                 {% csrf_token %}
                 {% for data in variant %}
@@ -38,30 +52,47 @@
                 {% endfor %}
             </form><br>
         {% endif %}
-
-
+        <br>
+        <div class="card bg-primary m-2">
+            <h6>your choice size:{{ variants.size_variant  price:{{ variants.total_price }} </h6>
+        </div><br>
+        <div class="card">
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ cart_form }}
+                <button type="submit">Add</button>
+            </form>
+        </div>
+        <hr>
         <div class="row comment">
             <div class="col-6">
-                <form method="post" action="{% url 'home:product_comment' product.id %}">
-                    {% csrf_token %}
-                    <div class="card">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="comment-box">
-                                    <h5>Add Comment</h5>
-                                    <div class="rating">
-                                        <input type="radio" name="rate" value="5" id="5"><label for="5">&star;</label>
-                                        <input type="radio" name="rate" value="5" id="4"><label for="4">&star;</label>
-                                        <input type="radio" name="rate" value="5" id="3"><label for="3">&star;</label>
-                                        <input type="radio" name="rate" value="5" id="2"><label for="2">&star;</label>
-                                        <input type="radio" name="rate" value="5" id="1"><label for="1">&star;</label>
-                                    </div>
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'home:product_comment' product.id %}">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="comment-box">
-                                        <textarea name="comment" class="form-control" rows="4"></textarea>
+                                        <h5>Add Comment</h5>
+                                        <div class="rating">
+                                            <input type="radio" name="rate" value="5" id="5"><label
+                                                for="5">&star;</label>
+                                            <input type="radio" name="rate" value="5" id="4"><label
+                                                for="4">&star;</label>
+                                            <input type="radio" name="rate" value="5" id="3"><label
+                                                for="3">&star;</label>
+                                            <input type="radio" name="rate" value="5" id="2"><label
+                                                for="2">&star;</label>
+                                            <input type="radio" name="rate" value="5" id="1"><label
+                                                for="1">&star;</label>
+                                    </div>
+                                    <div class="comment-area">
+                                        <textarea name="comment" class="form-control" placeholder="say your comment..."
+                                                  id="comment" rows="4" required oninvalid="setCustomValidity('نظر خودرا درج کنید')"></textarea>
                                     </div>
                                     <br>
                                     <div class="text-left">
-                                        <button type="submit" class="btn btn-danger">Send Comment</button>
+                                        <button type="submit" class="btn btn-danger m-2">Send Comment</button>
                                     </div>
                                     <br>
                                 </div>
@@ -75,7 +106,7 @@
             <div class="card bg-dark text-white mb-2">
                 <div class="row">
                     <div class="col-8">
-                        <p>{{ cm.user.username }}</p>
+                        <h5>{{ cm.user.first_name }} {{ cm.user.last_name }}</h5>
                     </div>
                     <div class="col-4">
                         <div class="comment-rating">
@@ -87,10 +118,47 @@
                         </div>
                     </div>
                 </div>
-                <div class="row p-3">
+                <div class="row pl-3">
                     <p>{{ cm.comment }}</p>
                 </div>
+                <form method="post" action="{% url 'home:product_reply' product.id cm.id %}">
+                    {% csrf_token %}
+                    <textarea name="comment" placeholder="reply" class="form-control" rows="4" id="cm"></textarea>
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-info">Send</button>
+                    </div>
+                </form>
+                {% for data in cm.comment_reply.all %}
+                    <div class="bg-info text-white mt-2 p-2">
+                        <p>{{ data.comment }}</p>
+                    </div>
+                {% endfor %}
             </div>
+        {% endfor %}
+        <br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {% for tag in similar %}
+            <a href="{% url 'home:detail' tag.id %}">
+                <img src="{{ tag.image.url }}">
+            </a>
         {% endfor %}
     </div>
 
